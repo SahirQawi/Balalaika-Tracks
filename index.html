@@ -30,10 +30,9 @@
       box-sizing: border-box;
     }
 
-    /* --- STICKY TOP SECTION --- */
     .sticky-top {
       flex-shrink: 0;
-      padding: 15px 15px 10px 15px;
+      padding: 15px;
       background: var(--bg-black);
       z-index: 10;
       border-bottom: 1px solid #1a1a1a;
@@ -41,80 +40,73 @@
     }
 
     .player-header { 
-      margin-bottom: 8px; 
+      margin-bottom: 15px; 
       line-height: 1.1;
     }
     
-    .line-1 { font-size: 24px; letter-spacing: 4px; display: block; }
-    .line-2 { font-size: 11px; letter-spacing: 1.8px; color: var(--neon-pink); display: block; margin-top: 4px; opacity: 0.9; }
+    .line-1 { font-size: 22px; letter-spacing: 3px; display: block; }
+    .line-2 { font-size: 10px; letter-spacing: 1.5px; color: var(--neon-pink); display: block; margin-top: 4px; opacity: 0.9; }
 
-    /* --- TRIPLED SIZE ALBUM ART --- */
+    /* --- SIDE-BY-SIDE LAYOUT --- */
+    .hero-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 15px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
     .album-art {
-      width: 240px; 
-      max-width: 80%; /* Responsive for smaller phones */
-      height: auto;
-      aspect-ratio: 1 / 1;
+      width: 160px; /* Reduced slightly to fit buttons beside it */
+      height: 160px;
       object-fit: cover;
       border-radius: 12px;
       border: 2px solid var(--neon-pink);
-      margin: 10px auto; 
-      display: block;
       box-shadow: 0 0 15px rgba(222, 112, 161, 0.4);
     }
 
-    .cta-container {
-      margin-bottom: 12px;
-    }
-
-    .expand-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      border: 1px solid var(--neon-pink);
-      color: var(--neon-pink);
-      padding: 8px 16px;
-      text-decoration: none;
-      font-size: 10px;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      border-radius: 4px;
-      background: rgba(222, 112, 161, 0.1);
-      transition: all 0.3s ease;
-    }
-
-    .expand-btn:hover {
-      background: var(--neon-pink);
-      color: #fff;
-    }
-
-    audio {
-      width: 100%;
-      height: 35px;
-      margin-bottom: 10px;
-      filter: invert(90%) hue-rotate(180deg) brightness(1.2);
-    }
-
-    .controls-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
+    .side-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex-grow: 1;
     }
 
     .nav-btn {
       background: transparent;
       border: 1px solid var(--neon-cyan);
       color: var(--neon-cyan);
-      padding: 10px 0;
+      padding: 12px 8px;
       font-family: 'Russo One', sans-serif;
       cursor: pointer;
       text-transform: uppercase;
       font-size: 10px;
       border-radius: 4px;
+      transition: all 0.2s;
+      width: 100%;
     }
 
-    .play-btn { background: rgba(0, 255, 255, 0.15); font-weight: bold; }
-    .loop-active { border-color: var(--neon-pink) !important; color: var(--neon-pink) !important; background: rgba(222, 112, 161, 0.1) !important; }
+    .play-btn { 
+      background: rgba(0, 255, 255, 0.15); 
+      font-weight: bold;
+      border-color: var(--neon-cyan);
+    }
+
+    .loop-active { 
+      border-color: var(--neon-pink) !important; 
+      color: var(--neon-pink) !important; 
+      background: rgba(222, 112, 161, 0.1) !important; 
+    }
+
+    audio {
+      width: 100%;
+      height: 30px;
+      margin-bottom: 10px;
+      filter: invert(90%) hue-rotate(180deg) brightness(1.2);
+    }
 
     /* --- PLAYLIST AREA --- */
     .playlist-area {
@@ -146,12 +138,15 @@
       color: var(--neon-cyan);
     }
 
-    .track.active .track-duration {
-      color: var(--neon-pink);
-    }
+    .track.active .track-duration { color: var(--neon-pink); }
 
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: var(--neon-pink); }
+
+    @media (max-width: 360px) {
+      .hero-container { gap: 10px; }
+      .album-art { width: 120px; height: 120px; }
+    }
   </style>
 </head>
 <body>
@@ -162,22 +157,19 @@
       <span class="line-2">BALALAIKA TRACKS</span>
     </div>
 
-    <img src="https://i.postimg.cc/qBhBz9sG/Balalaika-image.jpg" alt="Balalaika Art" class="album-art">
-
-    <div class="cta-container">
-      <a href="https://sahirqawi.github.io/Balalaika-Tracks/" target="_blank" class="expand-btn">
-        📱 Mobile: Tap to Expand 🖱️
-      </a>
+    <!-- SIDE BY SIDE CONTAINER -->
+    <div class="hero-container">
+      <img src="https://i.postimg.cc/qBhBz9sG/Balalaika-image.jpg" alt="Balalaika Art" class="album-art">
+      
+      <div class="side-controls">
+        <button class="nav-btn play-btn" onclick="masterPlay()">Play/Pause</button>
+        <button class="nav-btn" onclick="prevTrack()">« Prev</button>
+        <button class="nav-btn" onclick="nextTrack()">Next »</button>
+        <button id="loop-btn" class="nav-btn" onclick="toggleLoop()">Loop</button>
+      </div>
     </div>
 
     <audio id="main-audio" controls controlsList="nodownload"></audio>
-
-    <div class="controls-grid">
-      <button class="nav-btn play-btn" onclick="masterPlay()">Play</button>
-      <button id="loop-btn" class="nav-btn" onclick="toggleLoop()">Loop</button>
-      <button class="nav-btn" onclick="prevTrack()">« Prev</button>
-      <button class="nav-btn" onclick="nextTrack()">Next »</button>
-    </div>
   </div>
 
   <div class="playlist-area" id="playlist-container"></div>

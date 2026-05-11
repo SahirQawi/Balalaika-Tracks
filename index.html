@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAHIR QAWI - BALALAIKA TRACKS</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
+
+    :root {
+      --neon-cyan: #00FFFF;
+      --neon-pink: #DE70A1;
+      --bg-black: #080808;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-black);
+      color: var(--neon-cyan);
+      font-family: 'Russo One', sans-serif;
+      height: 100%;
+      overflow: hidden; 
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* --- STICKY TOP SECTION --- */
+    .sticky-top {
+      flex-shrink: 0;
+      padding: 20px 15px 10px 15px;
+      background: var(--bg-black);
+      z-index: 10;
+      border-bottom: 1px solid #1a1a1a;
+      text-align: center;
+    }
+
+    .player-header { 
+      margin-bottom: 15px; 
+      line-height: 1.1;
+    }
+    
+    .line-1 { font-size: 24px; letter-spacing: 4px; display: block; }
+    .line-2 { font-size: 11px; letter-spacing: 1.8px; color: var(--neon-pink); display: block; margin-top: 4px; opacity: 0.9; }
+
+    audio {
+      width: 100%;
+      height: 35px;
+      margin-bottom: 15px;
+      filter: invert(90%) hue-rotate(180deg) brightness(1.2);
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: 1px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+      padding: 12px 0;
+      font-family: 'Russo One', sans-serif;
+      cursor: pointer;
+      text-transform: uppercase;
+      font-size: 10px;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .play-btn { background: rgba(0, 255, 255, 0.15); font-weight: bold; }
+    .loop-active { border-color: var(--neon-pink) !important; color: var(--neon-pink) !important; background: rgba(222, 112, 161, 0.1) !important; }
+
+    /* --- PLAYLIST AREA --- */
+    .playlist-area {
+      flex-grow: 1;
+      overflow-y: auto;
+      background: #0c0c0c;
+    }
+
+    .track {
+      padding: 16px 20px;
+      border-bottom: 1px solid #1a1a1a;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+
+    .track.active { 
+      background: rgba(222, 112, 161, 0.08); 
+      border-left: 4px solid var(--neon-pink);
+      color: var(--neon-pink);
+    }
+
+    .track-duration { 
+      font-family: 'Russo One', sans-serif;
+      font-weight: bold;
+      font-size: 11px; 
+      color: var(--neon-cyan);
+    }
+
+    .track.active .track-duration {
+      color: var(--neon-pink);
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: var(--neon-pink); }
+  </style>
+</head>
+<body>
+
+  <div class="sticky-top">
+    <div class="player-header">
+      <span class="line-1">SAHIR QAWI</span>
+      <span class="line-2">BALALAIKA TRACKS</span>
+    </div>
+
+    <audio id="main-audio" controls controlsList="nodownload"></audio>
+
+    <div class="controls-grid">
+      <button class="nav-btn play-btn" onclick="masterPlay()">Play</button>
+      <button id="loop-btn" class="nav-btn" onclick="toggleLoop()">Loop</button>
+      <button class="nav-btn" onclick="prevTrack()">« Prev</button>
+      <button class="nav-btn" onclick="nextTrack()">Next »</button>
+    </div>
+  </div>
+
+  <div class="playlist-area" id="playlist-container"></div>
+
+<script>
+  const tracks = [
+    { url: 'https://raw.githubusercontent.com/SahirQawi/Balalaika-Tracks/5716a5d1471e2bc4a8d3e801329661f17a063f1a/01_Strings%20of%20the%20Rus.mp3', title: '01. STRINGS OF THE RUS' },
+    { url: 'https://raw.githubusercontent.com/SahirQawi/Balalaika-Tracks/5716a5d1471e2bc4a8d3e801329661f17a063f1a/02_Whispers%20of%20Divination.mp3', title: '02. WHISPERS OF DIVINATION' },
+    { url: 'https://raw.githubusercontent.com/SahirQawi/Balalaika-Tracks/5716a5d1471e2bc4a8d3e801329661f17a063f1a/03_Tarot%20reading.mp3', title: '03. TAROT READING' },
+    { url: 'https://raw.githubusercontent.com/SahirQawi/Balalaika-Tracks/5716a5d1471e2bc4a8d3e801329661f17a063f1a/04_Hut%20with%20chicken%20legs.mp3', title: '04. HUT WITH CHICKEN LEGS' },
+    { url: 'https://raw.githubusercontent.com/SahirQawi/Balalaika-Tracks/5716a5d1471e2bc4a8d3e801329661f17a063f1a/05_Lingering%20Spectral.mp3', title: '05. LINGERING SPECTRAL' },
+    { url: 'https://raw.githubusercontent.com/SahirQawi/Balalaika-Tracks/5716a5d1471e2bc4a8d3e801329661f17a063f1a/06_%20The%20Wandering%20String.mp3', title: '06. THE WANDERING STRING' },
+    { url: 'https://raw.githubusercontent.com/SahirQawi/Balalaika-Tracks/5716a5d1471e2bc4a8d3e801329661f17a063f1a/07_Forest%20watchers.mp3', title: '07. FOREST WATCHERS' },
+    { url: 'https://raw.githubusercontent.com/SahirQawi/Balalaika-Tracks/5716a5d1471e2bc4a8d3e801329661f17a063f1a/08_Balalaika%20Instrumental%20.mp3', title: '08. BALALAIKA INSTRUMENTAL' },
+    { url: 'https://raw.githubusercontent.com/SahirQawi/Balalaika-Tracks/5716a5d1471e2bc4a8d3e801329661f17a063f1a/09_Three%20Strings%20Beneath%20the%20Birches.mp3', title: '09. THREE STRINGS BENEATH BIRCHES' },
+    { url: 'https://raw.githubusercontent.com/SahirQawi/Balalaika-Tracks/5716a5d1471e2bc4a8d3e801329661f17a063f1a/10_%20Sahir%20Qawi%20unfolds.mp3', title: '10. SAHIR QAWI UNFOLDS' }
+  ];
+
+  let currentTrackIndex = -1;
+  let isLooping = false;
+  const audio = document.getElementById('main-audio');
+  const playlistDiv = document.getElementById('playlist-container');
+  const loopBtn = document.getElementById('loop-btn');
+
+  function formatTime(seconds) {
+    if (isNaN(seconds)) return "--:--";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  function buildPlaylist() {
+    playlistDiv.innerHTML = '';
+    tracks.forEach((track, index) => {
+      const trackEl = document.createElement('div');
+      trackEl.className = 'track' + (index === currentTrackIndex ? ' active' : '');
+      trackEl.innerHTML = `
+        <span>${track.title}</span>
+        <span class="track-duration" id="dur-${index}">${track.duration || '--:--'}</span>
+      `;
+      trackEl.onclick = () => playTrack(index);
+      playlistDiv.appendChild(trackEl);
+
+      if (!track.duration) {
+        const tempAudio = new Audio(track.url);
+        tempAudio.addEventListener('loadedmetadata', () => {
+          track.duration = formatTime(tempAudio.duration);
+          const durDisplay = document.getElementById(`dur-${index}`);
+          if (durDisplay) durDisplay.innerText = track.duration;
+        });
+      }
+    });
+  }
+
+  function masterPlay() {
+    if (currentTrackIndex === -1) playTrack(0);
+    else audio.paused ? audio.play() : audio.pause();
+  }
+
+  function playTrack(index) {
+    if (index < 0 || index >= tracks.length) return;
+    currentTrackIndex = index;
+    audio.src = tracks[currentTrackIndex].url;
+    audio.play();
+    buildPlaylist();
+  }
+
+  function nextTrack() { playTrack((currentTrackIndex + 1) % tracks.length); }
+  function prevTrack() { playTrack((currentTrackIndex - 1 + tracks.length) % tracks.length); }
+  function toggleLoop() { isLooping = !isLooping; loopBtn.classList.toggle('loop-active', isLooping); }
+
+  audio.onended = () => isLooping ? (audio.currentTime = 0, audio.play()) : nextTrack();
+
+  buildPlaylist();
+</script>
+</body>
+</html>

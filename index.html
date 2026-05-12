@@ -27,60 +27,32 @@
       display: flex;
       flex-direction: column;
       width: 100%;
-      box-sizing: border-box;
     }
 
-    /* --- STICKY TOP SECTION --- */
+    /* --- TOP SECTION --- */
     .sticky-top {
       flex-shrink: 0;
-      padding: 15px 15px 10px 15px;
+      padding: 15px;
       background: var(--bg-black);
       z-index: 10;
       border-bottom: 1px solid #1a1a1a;
       text-align: center;
     }
 
-    .player-header { 
-      margin-bottom: 8px; 
-      line-height: 1.1;
-    }
-    
+    .player-header { margin-bottom: 8px; }
     .line-1 { font-size: 24px; letter-spacing: 4px; display: block; }
-    .line-2 { font-size: 11px; letter-spacing: 1.8px; color: var(--neon-pink); display: block; margin-top: 4px; opacity: 0.9; }
+    .line-2 { font-size: 11px; letter-spacing: 1.8px; color: var(--neon-pink); display: block; margin-top: 4px; }
 
-    /* Responsive Album Art */
     .album-art {
       width: 240px; 
       height: 240px; 
-      max-width: 60vw; /* Prevents overflow on very small phones */
-      max-height: 60vw;
+      max-width: 55vw;
       object-fit: cover;
       border-radius: 12px;
       border: 2px solid var(--neon-pink);
       margin: 10px auto; 
       display: block;
-      box-shadow: 0 0 15px rgba(222, 112, 161, 0.4);
-    }
-
-    .cta-container {
-      margin-bottom: 12px;
-    }
-
-    .expand-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      border: 1px solid var(--neon-pink);
-      color: var(--neon-pink);
-      padding: 8px 16px;
-      text-decoration: none;
-      font-size: 10px;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      border-radius: 4px;
-      background: rgba(222, 112, 161, 0.1);
-      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(222, 112, 161, 0.3);
     }
 
     audio {
@@ -102,14 +74,14 @@
       color: var(--neon-cyan);
       padding: 10px 0;
       font-family: 'Russo One', sans-serif;
-      cursor: pointer;
-      text-transform: uppercase;
       font-size: 10px;
       border-radius: 4px;
+      cursor: pointer;
+      text-transform: uppercase;
     }
 
-    .play-btn { background: rgba(0, 255, 255, 0.15); font-weight: bold; }
-    .loop-active { border-color: var(--neon-pink) !important; color: var(--neon-pink) !important; background: rgba(222, 112, 161, 0.1) !important; }
+    .play-btn { background: rgba(0, 255, 255, 0.1); }
+    .loop-active { border-color: var(--neon-pink); color: var(--neon-pink); background: rgba(222, 112, 161, 0.1); }
 
     /* --- PLAYLIST AREA --- */
     .playlist-area {
@@ -126,6 +98,7 @@
       justify-content: space-between;
       align-items: center;
       font-size: 12px;
+      transition: background 0.2s;
     }
 
     .track.active { 
@@ -134,35 +107,22 @@
       color: var(--neon-pink);
     }
 
-    /* --- NOW PLAYING VISUALS --- */
-    .track-meta {
+    /* --- VISUAL BAR ANIMATION --- */
+    .track-content {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
     }
 
-    .status-label {
-      font-size: 8px;
-      color: var(--neon-pink);
-      border: 1px solid var(--neon-pink);
-      padding: 2px 4px;
-      border-radius: 2px;
-      display: none;
-      letter-spacing: 1px;
-    }
-
-    .track.active .status-label {
-      display: inline-block;
-    }
-
-    .sound-bars {
-      display: none;
+    .visualizer {
+      display: none; /* Hidden by default */
       align-items: flex-end;
       gap: 2px;
-      height: 12px;
+      height: 14px;
+      width: 16px;
     }
 
-    .track.active .sound-bars {
+    .track.active .visualizer {
       display: flex;
     }
 
@@ -170,31 +130,26 @@
       width: 3px;
       height: 2px;
       background: var(--neon-pink);
-      animation: bar-dance 0.8s infinite ease-in-out;
+      animation: bounce 0.8s ease-in-out infinite;
     }
 
     .bar:nth-child(2) { animation-delay: 0.2s; }
     .bar:nth-child(3) { animation-delay: 0.4s; }
 
-    @keyframes bar-dance {
+    @keyframes bounce {
       0%, 100% { height: 2px; }
-      50% { height: 12px; }
+      50% { height: 14px; }
     }
 
-    /* Pause animation if audio is paused */
-    .is-paused .bar {
+    /* Stop bars when paused */
+    .paused .bar {
       animation-play-state: paused;
-      height: 4px;
+      height: 3px;
+      opacity: 0.5;
     }
 
-    .track-duration { 
-      font-size: 11px; 
-      color: var(--neon-cyan);
-    }
-
-    .track.active .track-duration {
-      color: var(--neon-pink);
-    }
+    .track-duration { font-size: 11px; color: var(--neon-cyan); }
+    .track.active .track-duration { color: var(--neon-pink); }
 
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: var(--neon-pink); }
@@ -210,16 +165,10 @@
 
     <img src="https://i.postimg.cc/qBhBz9sG/Balalaika-image.jpg" alt="Balalaika Art" class="album-art">
 
-    <div class="cta-container">
-      <a href="https://sahirqawi.github.io/Balalaika-Tracks/" target="_blank" class="expand-btn">
-        📱 TAP FOR FULL SCREEN EXPERIENCE
-      </a>
-    </div>
-
     <audio id="main-audio" controls controlsList="nodownload"></audio>
 
     <div class="controls-grid">
-      <button class="nav-btn play-btn" onclick="masterPlay()">Play / Pause</button>
+      <button class="nav-btn play-btn" onclick="masterPlay()">Play/Pause</button>
       <button id="loop-btn" class="nav-btn" onclick="toggleLoop()">Loop</button>
       <button class="nav-btn" onclick="prevTrack()">« Prev</button>
       <button class="nav-btn" onclick="nextTrack()">Next »</button>
@@ -260,19 +209,19 @@
     tracks.forEach((track, index) => {
       const isActive = index === currentTrackIndex;
       const isPaused = audio.paused;
-      
       const trackEl = document.createElement('div');
-      trackEl.className = `track ${isActive ? 'active' : ''} ${isPaused ? 'is-paused' : ''}`;
+      
+      // Add 'paused' class to the active track if audio is not playing
+      trackEl.className = `track ${isActive ? 'active' : ''} ${isActive && isPaused ? 'paused' : ''}`;
       
       trackEl.innerHTML = `
-        <div class="track-meta">
-          <span class="status-label">PLAYING</span>
-          <span>${track.title}</span>
-          <div class="sound-bars">
+        <div class="track-content">
+          <div class="visualizer">
             <div class="bar"></div>
             <div class="bar"></div>
             <div class="bar"></div>
           </div>
+          <span>${track.title}</span>
         </div>
         <span class="track-duration" id="dur-${index}">${track.duration || '--:--'}</span>
       `;
@@ -293,7 +242,6 @@
   function masterPlay() {
     if (currentTrackIndex === -1) playTrack(0);
     else audio.paused ? audio.play() : audio.pause();
-    buildPlaylist(); // Refresh bars
   }
 
   function playTrack(index) {
@@ -312,6 +260,7 @@
   function prevTrack() { playTrack((currentTrackIndex - 1 + tracks.length) % tracks.length); }
   function toggleLoop() { isLooping = !isLooping; loopBtn.classList.toggle('loop-active', isLooping); }
 
+  // Listeners to refresh visual bars on play/pause
   audio.onplay = () => buildPlaylist();
   audio.onpause = () => buildPlaylist();
   audio.onended = () => isLooping ? (audio.currentTime = 0, audio.play()) : nextTrack();

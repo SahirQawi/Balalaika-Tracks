@@ -43,9 +43,9 @@
     .line-2 { font-size: 10px; letter-spacing: 1.5px; color: var(--neon-pink); display: block; margin-top: 2px; }
 
     .album-art {
-      width: 200px; 
-      height: 200px; 
-      max-width: 40vw;
+      width: 180px; 
+      height: 180px; 
+      max-width: 35vw;
       object-fit: cover;
       border-radius: 12px;
       border: 2px solid var(--neon-pink);
@@ -54,7 +54,6 @@
       box-shadow: 0 0 15px rgba(222, 112, 161, 0.3);
     }
 
-    /* --- NOW PLAYING SCROLLING DISPLAY --- */
     .now-playing-display {
       margin: 8px 0;
       padding: 6px 12px;
@@ -65,7 +64,7 @@
       align-items: center;
       gap: 10px; 
       min-height: 25px;
-      overflow: hidden; /* Clips the scrolling text */
+      overflow: hidden;
       position: relative;
     }
 
@@ -76,11 +75,10 @@
       white-space: nowrap;
       display: none; 
       z-index: 2;
-      background: var(--bg-black); /* Covers text behind it */
+      background: var(--bg-black);
       padding-right: 8px;
     }
 
-    /* Scrolling Container */
     .scroll-container {
       flex-grow: 1;
       overflow: hidden;
@@ -93,7 +91,7 @@
       font-size: 10px;
       color: var(--neon-cyan);
       text-transform: uppercase;
-      padding-left: 100%; /* Start off-screen */
+      padding-left: 100%;
       animation: marquee 10s linear infinite;
     }
 
@@ -102,7 +100,6 @@
       100% { transform: translate(-100%, 0); }
     }
 
-    /* Small Visualizer Bars */
     .main-visualizer {
       display: none; 
       align-items: flex-end;
@@ -133,26 +130,29 @@
     audio {
       width: 100%;
       height: 30px;
-      margin-bottom: 8px;
+      margin-top: 10px;
       filter: invert(90%) hue-rotate(180deg) brightness(1.2);
     }
 
     .controls-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
       gap: 5px;
+      justify-content: space-between;
+      margin-top: 2px;
     }
 
     .nav-btn {
+      flex: 1;
       background: transparent;
       border: 1px solid var(--neon-cyan);
       color: var(--neon-cyan);
-      padding: 8px 0;
+      padding: 10px 0;
       font-family: 'Russo One', sans-serif;
       font-size: 9px;
       border-radius: 4px;
       cursor: pointer;
       text-transform: uppercase;
+      white-space: nowrap;
     }
 
     .play-btn { background: rgba(0, 255, 255, 0.1); }
@@ -180,8 +180,15 @@
       color: var(--neon-pink);
     }
 
-    .track-duration { font-size: 10px; color: var(--neon-cyan); }
-    .track.active .track-duration { color: var(--neon-pink); }
+    .track-duration { 
+      font-size: 10px; 
+      color: var(--neon-cyan); 
+      opacity: 0.8;
+      min-width: 40px;
+      text-align: right;
+    }
+    
+    .track.active .track-duration { color: var(--neon-pink); opacity: 1; }
 
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: var(--neon-pink); }
@@ -211,14 +218,14 @@
       </div>
     </div>
 
-    <audio id="main-audio" controls controlsList="nodownload"></audio>
-
     <div class="controls-grid">
+      <button class="nav-btn" onclick="prevTrack()">« Prev</button>
       <button class="nav-btn play-btn" onclick="masterPlay()">Play/Pause</button>
       <button id="loop-btn" class="nav-btn" onclick="toggleLoop()">Loop</button>
-      <button class="nav-btn" onclick="prevTrack()">« Prev</button>
       <button class="nav-btn" onclick="nextTrack()">Next »</button>
     </div>
+
+    <audio id="main-audio" controls controlsList="nodownload"></audio>
   </div>
 
   <div class="playlist-area" id="playlist-container"></div>
@@ -247,15 +254,22 @@
   const mainViz = document.getElementById('main-viz');
   const body = document.getElementById('main-body');
 
+  // Helper to convert seconds into M:SS format
+  function formatTime(seconds) {
+    if (isNaN(seconds) || seconds === Infinity) return '0:00';
+    const min = Math.floor(seconds / 60);
+    const sec = Math.floor(seconds % 60);
+    return min + ":" + (sec < 10 ? "0" : "") + sec;
+  }
+
   function updateDisplayBox() {
     if (currentTrackIndex !== -1) {
       displayTitle.innerText = tracks[currentTrackIndex].title;
       displayBadge.style.display = 'inline-block';
       mainViz.style.display = 'flex';
       
-      // Handle scrolling animation reset
       displayTitle.style.animation = 'none';
-      displayTitle.offsetHeight; /* trigger reflow */
+      displayTitle.offsetHeight; 
       displayTitle.style.animation = null;
 
       if (audio.paused) body.classList.add('paused');
@@ -269,15 +283,21 @@
       const isActive = index === currentTrackIndex;
       const trackEl = document.createElement('div');
       trackEl.className = `track ${isActive ? 'active' : ''}`;
+      
+      // If duration isn't loaded yet, show loading dots
+      const durationText = track.duration ? track.duration : '--:--';
+      
       trackEl.innerHTML = `
         <span>${track.title}</span>
-        <span class="track-duration" id="dur-${index}">${track.duration || '--:--'}</span>
+        <span class="track-duration" id="dur-${index}">${durationText}</span>
       `;
       trackEl.onclick = () => playTrack(index);
       playlistDiv.appendChild(trackEl);
 
+      // If duration isn't in memory, load the file metadata to get it
       if (!track.duration) {
-        const tempAudio = new Audio(track.url);
+        const tempAudio = new Audio();
+        tempAudio.src = track.url;
         tempAudio.addEventListener('loadedmetadata', () => {
           track.duration = formatTime(tempAudio.duration);
           const durDisplay = document.getElementById(`dur-${index}`);
@@ -314,6 +334,7 @@
   audio.onpause = () => updateDisplayBox();
   audio.onended = () => isLooping ? (audio.currentTime = 0, audio.play()) : nextTrack();
 
+  // Initial build
   buildPlaylist();
 </script>
 </body>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>SAHIR QAWI - BALALAIKA TRACKS</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
@@ -42,16 +42,18 @@
     .line-1 { font-size: 22px; letter-spacing: 3px; display: block; }
     .line-2 { font-size: 10px; letter-spacing: 1.5px; color: var(--neon-pink); display: block; margin-top: 2px; }
 
+    /* --- FIX: ALBUM ART MOBILE SCALING --- */
     .album-art {
-      width: 180px; 
-      height: 180px; 
-      max-width: 35vw;
-      object-fit: cover;
+      width: 100%;
+      max-width: 200px; /* Limits size on desktop */
+      aspect-ratio: 1 / 1; /* Keeps it square */
+      object-fit: contain; /* Shows the WHOLE image without cropping */
       border-radius: 12px;
       border: 2px solid var(--neon-pink);
       margin: 8px auto; 
       display: block;
       box-shadow: 0 0 15px rgba(222, 112, 161, 0.3);
+      background: #000;
     }
 
     .now-playing-display {
@@ -127,9 +129,13 @@
     .paused .main-bar { animation-play-state: paused !important; }
     .paused .current-track-title { animation-play-state: paused !important; }
 
-    /* Hiding the native audio bar completely */
+    /* --- FIX: AGGRESSIVE HIDE FOR MOBILE AUDIO BAR --- */
     audio {
-      display: none;
+      visibility: hidden;
+      position: absolute;
+      width: 0;
+      height: 0;
+      pointer-events: none;
     }
 
     .controls-grid {
@@ -137,7 +143,6 @@
       gap: 5px;
       justify-content: space-between;
       margin-top: 5px;
-      margin-bottom: 5px;
     }
 
     .nav-btn {
@@ -145,13 +150,14 @@
       background: transparent;
       border: 1px solid var(--neon-cyan);
       color: var(--neon-cyan);
-      padding: 12px 0; /* Slightly larger for easier tapping */
+      padding: 12px 0;
       font-family: 'Russo One', sans-serif;
       font-size: 9px;
       border-radius: 4px;
       cursor: pointer;
       text-transform: uppercase;
       white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .play-btn { background: rgba(0, 255, 255, 0.1); }
@@ -161,6 +167,7 @@
       flex-grow: 1;
       overflow-y: auto;
       background: #0c0c0c;
+      -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
     }
 
     .track {
@@ -183,8 +190,6 @@
       font-size: 10px; 
       color: var(--neon-cyan); 
       opacity: 0.8;
-      min-width: 40px;
-      text-align: right;
     }
     
     .track.active .track-duration { color: var(--neon-pink); opacity: 1; }
@@ -224,7 +229,6 @@
       <button class="nav-btn" onclick="nextTrack()">Next »</button>
     </div>
 
-    <!-- Audio remains in the code but is hidden via CSS -->
     <audio id="main-audio"></audio>
   </div>
 

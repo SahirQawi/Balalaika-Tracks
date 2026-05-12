@@ -42,18 +42,28 @@
     .line-1 { font-size: 22px; letter-spacing: 3px; display: block; }
     .line-2 { font-size: 10px; letter-spacing: 1.5px; color: var(--neon-pink); display: block; margin-top: 2px; }
 
-    /* --- FIX: ALBUM ART MOBILE SCALING --- */
+    /* --- IMAGE FIX: NO CROPPING --- */
+    .art-container {
+      width: 200px;
+      height: 200px;
+      max-width: 50vw;
+      max-height: 50vw;
+      margin: 10px auto;
+      border: 2px solid var(--neon-pink);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 15px rgba(222, 112, 161, 0.3);
+      background-color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     .album-art {
       width: 100%;
-      max-width: 200px; /* Limits size on desktop */
-      aspect-ratio: 1 / 1; /* Keeps it square */
-      object-fit: contain; /* Shows the WHOLE image without cropping */
-      border-radius: 12px;
-      border: 2px solid var(--neon-pink);
-      margin: 8px auto; 
+      height: 100%;
+      object-fit: contain; /* Ensures the whole image fits inside the box */
       display: block;
-      box-shadow: 0 0 15px rgba(222, 112, 161, 0.3);
-      background: #000;
     }
 
     .now-playing-display {
@@ -129,13 +139,17 @@
     .paused .main-bar { animation-play-state: paused !important; }
     .paused .current-track-title { animation-play-state: paused !important; }
 
-    /* --- FIX: AGGRESSIVE HIDE FOR MOBILE AUDIO BAR --- */
+    /* --- NATIVE BAR FIX: ABSOLUTE SUPPRESSION --- */
     audio {
-      visibility: hidden;
-      position: absolute;
-      width: 0;
-      height: 0;
-      pointer-events: none;
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      position: fixed !important;
+      top: -9999px !important;
+      left: -9999px !important;
+      height: 0 !important;
+      width: 0 !important;
+      pointer-events: none !important;
     }
 
     .controls-grid {
@@ -150,7 +164,7 @@
       background: transparent;
       border: 1px solid var(--neon-cyan);
       color: var(--neon-cyan);
-      padding: 12px 0;
+      padding: 14px 0; /* Taller for mobile thumbs */
       font-family: 'Russo One', sans-serif;
       font-size: 9px;
       border-radius: 4px;
@@ -167,11 +181,11 @@
       flex-grow: 1;
       overflow-y: auto;
       background: #0c0c0c;
-      -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
+      -webkit-overflow-scrolling: touch;
     }
 
     .track {
-      padding: 12px 15px;
+      padding: 15px;
       border-bottom: 1px solid #1a1a1a;
       cursor: pointer;
       display: flex;
@@ -189,11 +203,9 @@
     .track-duration { 
       font-size: 10px; 
       color: var(--neon-cyan); 
-      opacity: 0.8;
+      opacity: 0.7;
     }
     
-    .track.active .track-duration { color: var(--neon-pink); opacity: 1; }
-
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: var(--neon-pink); }
   </style>
@@ -206,7 +218,10 @@
       <span class="line-2">BALALAIKA TRACKS</span>
     </div>
 
-    <img src="https://i.postimg.cc/qBhBz9sG/Balalaika-image.jpg" alt="Balalaika Art" class="album-art">
+    <!-- Container ensures image doesn't stretch or crop -->
+    <div class="art-container">
+      <img src="https://i.postimg.cc/qBhBz9sG/Balalaika-image.jpg" alt="Balalaika Art" class="album-art">
+    </div>
 
     <div class="now-playing-display" id="display-box">
       <span class="now-playing-badge" id="now-playing-badge">NOW PLAYING</span>
@@ -229,7 +244,7 @@
       <button class="nav-btn" onclick="nextTrack()">Next »</button>
     </div>
 
-    <audio id="main-audio"></audio>
+    <audio id="main-audio" playsinline></audio>
   </div>
 
   <div class="playlist-area" id="playlist-container"></div>
@@ -287,7 +302,7 @@
       const trackEl = document.createElement('div');
       trackEl.className = `track ${isActive ? 'active' : ''}`;
       
-      const durationText = track.duration ? track.duration : '--:--';
+      const durationText = track.duration || '--:--';
       
       trackEl.innerHTML = `
         <span>${track.title}</span>
@@ -297,8 +312,7 @@
       playlistDiv.appendChild(trackEl);
 
       if (!track.duration) {
-        const tempAudio = new Audio();
-        tempAudio.src = track.url;
+        const tempAudio = new Audio(track.url);
         tempAudio.addEventListener('loadedmetadata', () => {
           track.duration = formatTime(tempAudio.duration);
           const durDisplay = document.getElementById(`dur-${index}`);

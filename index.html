@@ -54,19 +54,19 @@
       box-shadow: 0 0 15px rgba(222, 112, 161, 0.3);
     }
 
-    /* --- NOW PLAYING SINGLE LINE DISPLAY --- */
+    /* --- NOW PLAYING SCROLLING DISPLAY --- */
     .now-playing-display {
       margin: 8px 0;
-      padding: 6px 10px;
+      padding: 6px 12px;
       background: rgba(222, 112, 161, 0.05);
       border: 1px solid rgba(222, 112, 161, 0.3);
       border-radius: 4px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 8px; 
+      gap: 10px; 
       min-height: 25px;
-      flex-wrap: wrap; /* Allows text to drop to next line if track name is very long */
+      overflow: hidden; /* Clips the scrolling text */
+      position: relative;
     }
 
     .now-playing-badge {
@@ -75,15 +75,31 @@
       letter-spacing: 1px;
       white-space: nowrap;
       display: none; 
-      padding-right: 5px;
+      z-index: 2;
+      background: var(--bg-black); /* Covers text behind it */
+      padding-right: 8px;
+    }
+
+    /* Scrolling Container */
+    .scroll-container {
+      flex-grow: 1;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
     }
 
     .current-track-title {
-      font-size: 10px; /* Decreased font to ensure full title shows */
+      display: inline-block;
+      font-size: 10px;
       color: var(--neon-cyan);
       text-transform: uppercase;
-      text-align: center;
-      line-height: 1.2;
+      padding-left: 100%; /* Start off-screen */
+      animation: marquee 10s linear infinite;
+    }
+
+    @keyframes marquee {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-100%, 0); }
     }
 
     /* Small Visualizer Bars */
@@ -92,12 +108,14 @@
       align-items: flex-end;
       gap: 2px;
       height: 10px;
+      z-index: 2;
+      background: var(--bg-black);
+      padding-right: 5px;
     }
 
     .main-bar {
       width: 2px;
       background: var(--neon-pink);
-      box-shadow: 0 0 4px var(--neon-pink);
       animation: bounce-small 0.6s infinite ease-in-out;
     }
 
@@ -109,11 +127,8 @@
     .main-bar:nth-child(2) { animation-delay: 0.1s; }
     .main-bar:nth-child(3) { animation-delay: 0.2s; }
 
-    .paused .main-bar { 
-      animation-play-state: paused !important; 
-      height: 2px;
-      opacity: 0.6;
-    }
+    .paused .main-bar { animation-play-state: paused !important; }
+    .paused .current-track-title { animation-play-state: paused !important; }
 
     audio {
       width: 100%;
@@ -191,7 +206,9 @@
         <div class="main-bar"></div>
       </div>
       
-      <div class="current-track-title" id="current-title">SYSTEM READY</div>
+      <div class="scroll-container">
+        <span class="current-track-title" id="current-title">PLEASE SELECT A TRACK TO START SYSTEM</span>
+      </div>
     </div>
 
     <audio id="main-audio" controls controlsList="nodownload"></audio>
@@ -235,6 +252,12 @@
       displayTitle.innerText = tracks[currentTrackIndex].title;
       displayBadge.style.display = 'inline-block';
       mainViz.style.display = 'flex';
+      
+      // Handle scrolling animation reset
+      displayTitle.style.animation = 'none';
+      displayTitle.offsetHeight; /* trigger reflow */
+      displayTitle.style.animation = null;
+
       if (audio.paused) body.classList.add('paused');
       else body.classList.remove('paused');
     }
@@ -267,6 +290,7 @@
   function masterPlay() {
     if (currentTrackIndex === -1) playTrack(0);
     else audio.paused ? audio.play() : audio.pause();
+    updateDisplayBox();
   }
 
   function playTrack(index) {

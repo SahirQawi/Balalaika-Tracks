@@ -29,7 +29,6 @@
       width: 100%;
     }
 
-    /* --- TOP SECTION --- */
     .sticky-top {
       flex-shrink: 0;
       padding: 15px;
@@ -46,7 +45,7 @@
     .album-art {
       width: 240px; 
       height: 240px; 
-      max-width: 50vw;
+      max-width: 45vw;
       object-fit: cover;
       border-radius: 12px;
       border: 2px solid var(--neon-pink);
@@ -55,36 +54,66 @@
       box-shadow: 0 0 15px rgba(222, 112, 161, 0.3);
     }
 
-    /* --- NOW PLAYING DISPLAY BOX (UNDER IMAGE) --- */
+    /* --- ENHANCED NOW PLAYING DISPLAY (UNDER IMAGE) --- */
     .now-playing-display {
-      margin: 10px 0;
-      padding: 10px;
-      background: rgba(0, 255, 255, 0.05);
-      border: 1px solid rgba(0, 255, 255, 0.2);
-      border-radius: 6px;
-      min-height: 40px;
+      margin: 12px 0;
+      padding: 12px;
+      background: rgba(222, 112, 161, 0.05);
+      border: 1px dashed var(--neon-pink);
+      border-radius: 8px;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
+      gap: 15px;
+      min-height: 50px;
+    }
+
+    .display-text-group {
+      text-align: left;
     }
 
     .now-playing-badge {
-      font-size: 9px;
+      font-size: 8px;
       color: var(--neon-pink);
       letter-spacing: 2px;
-      margin-bottom: 4px;
-      font-weight: bold;
-      display: none; /* Only shows when a track starts */
+      display: none;
+      margin-bottom: 2px;
     }
 
     .current-track-title {
-      font-size: 14px;
+      font-size: 13px;
       color: var(--neon-cyan);
       text-transform: uppercase;
-      letter-spacing: 1px;
+      max-width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
+    /* Large Visualizer Bars */
+    .main-visualizer {
+      display: none; /* Hidden until play */
+      align-items: flex-end;
+      gap: 3px;
+      height: 25px;
+    }
+
+    .main-bar {
+      width: 4px;
+      background: var(--neon-pink);
+      animation: bounce-large 0.7s infinite ease-in-out;
+    }
+
+    @keyframes bounce-large {
+      0%, 100% { height: 5px; }
+      50% { height: 25px; }
+    }
+
+    .main-bar:nth-child(2) { animation-delay: 0.1s; }
+    .main-bar:nth-child(3) { animation-delay: 0.3s; }
+    .main-bar:nth-child(4) { animation-delay: 0.2s; }
+
+    /* --- AUDIO & CONTROLS --- */
     audio {
       width: 100%;
       height: 35px;
@@ -113,7 +142,7 @@
     .play-btn { background: rgba(0, 255, 255, 0.1); }
     .loop-active { border-color: var(--neon-pink); color: var(--neon-pink); background: rgba(222, 112, 161, 0.1); }
 
-    /* --- PLAYLIST AREA --- */
+    /* --- PLAYLIST --- */
     .playlist-area {
       flex-grow: 1;
       overflow-y: auto;
@@ -131,43 +160,15 @@
     }
 
     .track.active { 
-      background: rgba(222, 112, 161, 0.12); 
+      background: rgba(222, 112, 161, 0.1); 
       border-left: 4px solid var(--neon-pink);
       color: var(--neon-pink);
     }
 
-    /* --- PLAYLIST MINI VISUALS --- */
-    .track-meta {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .paused .main-bar, .paused .bar { 
+      animation-play-state: paused !important; 
+      opacity: 0.4;
     }
-
-    .bar-container {
-      display: none;
-      align-items: flex-end;
-      gap: 2px;
-      height: 12px;
-    }
-
-    .track.active .bar-container { display: flex; }
-
-    .bar {
-      width: 3px;
-      background: var(--neon-pink);
-      animation: bounce 0.8s infinite ease-in-out;
-    }
-
-    .bar:nth-child(1) { height: 8px; animation-delay: 0.1s; }
-    .bar:nth-child(2) { height: 12px; animation-delay: 0.3s; }
-    .bar:nth-child(3) { height: 6px; animation-delay: 0.2s; }
-
-    @keyframes bounce {
-      0%, 100% { transform: scaleY(0.4); }
-      50% { transform: scaleY(1.2); }
-    }
-
-    .paused .bar { animation-play-state: paused; opacity: 0.5; }
 
     .track-duration { font-size: 11px; color: var(--neon-cyan); }
     .track.active .track-duration { color: var(--neon-pink); }
@@ -176,7 +177,7 @@
     ::-webkit-scrollbar-thumb { background: var(--neon-pink); }
   </style>
 </head>
-<body>
+<body id="main-body">
 
   <div class="sticky-top">
     <div class="player-header">
@@ -186,10 +187,19 @@
 
     <img src="https://i.postimg.cc/qBhBz9sG/Balalaika-image.jpg" alt="Balalaika Art" class="album-art">
 
-    <!-- NEW DISPLAY BOX -->
-    <div class="now-playing-display">
-      <span class="now-playing-badge" id="now-playing-badge">NOW PLAYING</span>
-      <span class="current-track-title" id="current-title">Select a track...</span>
+    <!-- MAIN NOW PLAYING BOX -->
+    <div class="now-playing-display" id="display-box">
+      <div class="main-visualizer" id="main-viz">
+        <div class="main-bar"></div>
+        <div class="main-bar"></div>
+        <div class="main-bar"></div>
+        <div class="main-bar"></div>
+      </div>
+      
+      <div class="display-text-group">
+        <span class="now-playing-badge" id="now-playing-badge">NOW PLAYING</span>
+        <div class="current-track-title" id="current-title">INITIALIZING SYSTEM...</div>
+      </div>
     </div>
 
     <audio id="main-audio" controls controlsList="nodownload"></audio>
@@ -225,18 +235,17 @@
   const loopBtn = document.getElementById('loop-btn');
   const displayTitle = document.getElementById('current-title');
   const displayBadge = document.getElementById('now-playing-badge');
-
-  function formatTime(seconds) {
-    if (isNaN(seconds)) return "--:--";
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  }
+  const mainViz = document.getElementById('main-viz');
+  const body = document.getElementById('main-body');
 
   function updateDisplayBox() {
     if (currentTrackIndex !== -1) {
       displayTitle.innerText = tracks[currentTrackIndex].title;
       displayBadge.style.display = 'block';
+      mainViz.style.display = 'flex';
+      // Sync pause state
+      if (audio.paused) body.classList.add('paused');
+      else body.classList.remove('paused');
     }
   }
 
@@ -244,20 +253,11 @@
     playlistDiv.innerHTML = '';
     tracks.forEach((track, index) => {
       const isActive = index === currentTrackIndex;
-      const isPaused = audio.paused;
       const trackEl = document.createElement('div');
-      
-      trackEl.className = `track ${isActive ? 'active' : ''} ${isActive && isPaused ? 'paused' : ''}`;
+      trackEl.className = `track ${isActive ? 'active' : ''}`;
       
       trackEl.innerHTML = `
-        <div class="track-meta">
-          <div class="bar-container">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-          </div>
-          <span>${track.title}</span>
-        </div>
+        <span>${track.title}</span>
         <span class="track-duration" id="dur-${index}">${track.duration || '--:--'}</span>
       `;
       trackEl.onclick = () => playTrack(index);
@@ -277,7 +277,7 @@
   function masterPlay() {
     if (currentTrackIndex === -1) playTrack(0);
     else audio.paused ? audio.play() : audio.pause();
-    buildPlaylist();
+    updateDisplayBox();
   }
 
   function playTrack(index) {
@@ -297,11 +297,12 @@
   function prevTrack() { playTrack((currentTrackIndex - 1 + tracks.length) % tracks.length); }
   function toggleLoop() { isLooping = !isLooping; loopBtn.classList.toggle('loop-active', isLooping); }
 
-  audio.onplay = () => buildPlaylist();
-  audio.onpause = () => buildPlaylist();
+  audio.onplay = () => updateDisplayBox();
+  audio.onpause = () => updateDisplayBox();
   audio.onended = () => isLooping ? (audio.currentTime = 0, audio.play()) : nextTrack();
 
   buildPlaylist();
+  displayTitle.innerText = "STANDBY: CHOOSE TRACK";
 </script>
 </body>
 </html>

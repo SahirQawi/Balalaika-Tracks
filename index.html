@@ -127,18 +127,17 @@
     .paused .main-bar { animation-play-state: paused !important; }
     .paused .current-track-title { animation-play-state: paused !important; }
 
+    /* Hiding the native audio bar completely */
     audio {
-      width: 100%;
-      height: 30px;
-      margin-top: 10px;
-      filter: invert(90%) hue-rotate(180deg) brightness(1.2);
+      display: none;
     }
 
     .controls-grid {
       display: flex;
       gap: 5px;
       justify-content: space-between;
-      margin-top: 2px;
+      margin-top: 5px;
+      margin-bottom: 5px;
     }
 
     .nav-btn {
@@ -146,7 +145,7 @@
       background: transparent;
       border: 1px solid var(--neon-cyan);
       color: var(--neon-cyan);
-      padding: 10px 0;
+      padding: 12px 0; /* Slightly larger for easier tapping */
       font-family: 'Russo One', sans-serif;
       font-size: 9px;
       border-radius: 4px;
@@ -225,7 +224,8 @@
       <button class="nav-btn" onclick="nextTrack()">Next »</button>
     </div>
 
-    <audio id="main-audio" controls controlsList="nodownload"></audio>
+    <!-- Audio remains in the code but is hidden via CSS -->
+    <audio id="main-audio"></audio>
   </div>
 
   <div class="playlist-area" id="playlist-container"></div>
@@ -254,7 +254,6 @@
   const mainViz = document.getElementById('main-viz');
   const body = document.getElementById('main-body');
 
-  // Helper to convert seconds into M:SS format
   function formatTime(seconds) {
     if (isNaN(seconds) || seconds === Infinity) return '0:00';
     const min = Math.floor(seconds / 60);
@@ -284,7 +283,6 @@
       const trackEl = document.createElement('div');
       trackEl.className = `track ${isActive ? 'active' : ''}`;
       
-      // If duration isn't loaded yet, show loading dots
       const durationText = track.duration ? track.duration : '--:--';
       
       trackEl.innerHTML = `
@@ -294,7 +292,6 @@
       trackEl.onclick = () => playTrack(index);
       playlistDiv.appendChild(trackEl);
 
-      // If duration isn't in memory, load the file metadata to get it
       if (!track.duration) {
         const tempAudio = new Audio();
         tempAudio.src = track.url;
@@ -334,7 +331,6 @@
   audio.onpause = () => updateDisplayBox();
   audio.onended = () => isLooping ? (audio.currentTime = 0, audio.play()) : nextTrack();
 
-  // Initial build
   buildPlaylist();
 </script>
 </body>

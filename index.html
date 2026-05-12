@@ -54,64 +54,69 @@
       box-shadow: 0 0 15px rgba(222, 112, 161, 0.3);
     }
 
-    /* --- ENHANCED NOW PLAYING DISPLAY (UNDER IMAGE) --- */
+    /* --- NOW PLAYING SINGLE LINE DISPLAY --- */
     .now-playing-display {
       margin: 12px 0;
-      padding: 12px;
+      padding: 8px 12px;
       background: rgba(222, 112, 161, 0.05);
-      border: 1px dashed var(--neon-pink);
-      border-radius: 8px;
+      border: 1px solid rgba(222, 112, 161, 0.3);
+      border-radius: 4px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 15px;
-      min-height: 50px;
-    }
-
-    .display-text-group {
-      text-align: left;
+      gap: 10px; /* Space between elements */
+      min-height: 30px;
     }
 
     .now-playing-badge {
-      font-size: 8px;
+      font-size: 9px;
       color: var(--neon-pink);
-      letter-spacing: 2px;
-      display: none;
-      margin-bottom: 2px;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      display: none; /* Hidden until play */
+      border-right: 1px solid rgba(222, 112, 161, 0.4);
+      padding-right: 10px;
     }
 
     .current-track-title {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--neon-cyan);
       text-transform: uppercase;
-      max-width: 200px;
+      max-width: 180px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    /* Large Visualizer Bars */
+    /* Small Visualizer Bars */
     .main-visualizer {
       display: none; /* Hidden until play */
       align-items: flex-end;
-      gap: 3px;
-      height: 25px;
+      gap: 2px;
+      height: 12px;
     }
 
     .main-bar {
-      width: 4px;
+      width: 3px;
       background: var(--neon-pink);
-      animation: bounce-large 0.7s infinite ease-in-out;
+      box-shadow: 0 0 5px var(--neon-pink);
+      animation: bounce-small 0.6s infinite ease-in-out;
     }
 
-    @keyframes bounce-large {
-      0%, 100% { height: 5px; }
-      50% { height: 25px; }
+    @keyframes bounce-small {
+      0%, 100% { height: 3px; }
+      50% { height: 12px; }
     }
 
     .main-bar:nth-child(2) { animation-delay: 0.1s; }
-    .main-bar:nth-child(3) { animation-delay: 0.3s; }
-    .main-bar:nth-child(4) { animation-delay: 0.2s; }
+    .main-bar:nth-child(3) { animation-delay: 0.2s; }
+
+    /* Control Pausing */
+    .paused .main-bar { 
+      animation-play-state: paused !important; 
+      height: 3px;
+      opacity: 0.6;
+    }
 
     /* --- AUDIO & CONTROLS --- */
     audio {
@@ -165,11 +170,6 @@
       color: var(--neon-pink);
     }
 
-    .paused .main-bar, .paused .bar { 
-      animation-play-state: paused !important; 
-      opacity: 0.4;
-    }
-
     .track-duration { font-size: 11px; color: var(--neon-cyan); }
     .track.active .track-duration { color: var(--neon-pink); }
 
@@ -187,19 +187,17 @@
 
     <img src="https://i.postimg.cc/qBhBz9sG/Balalaika-image.jpg" alt="Balalaika Art" class="album-art">
 
-    <!-- MAIN NOW PLAYING BOX -->
+    <!-- SINGLE LINE NOW PLAYING DISPLAY -->
     <div class="now-playing-display" id="display-box">
+      <span class="now-playing-badge" id="now-playing-badge">NOW PLAYING</span>
+      
       <div class="main-visualizer" id="main-viz">
-        <div class="main-bar"></div>
         <div class="main-bar"></div>
         <div class="main-bar"></div>
         <div class="main-bar"></div>
       </div>
       
-      <div class="display-text-group">
-        <span class="now-playing-badge" id="now-playing-badge">NOW PLAYING</span>
-        <div class="current-track-title" id="current-title">INITIALIZING SYSTEM...</div>
-      </div>
+      <div class="current-track-title" id="current-title">SYSTEM READY</div>
     </div>
 
     <audio id="main-audio" controls controlsList="nodownload"></audio>
@@ -241,9 +239,8 @@
   function updateDisplayBox() {
     if (currentTrackIndex !== -1) {
       displayTitle.innerText = tracks[currentTrackIndex].title;
-      displayBadge.style.display = 'block';
+      displayBadge.style.display = 'inline-block';
       mainViz.style.display = 'flex';
-      // Sync pause state
       if (audio.paused) body.classList.add('paused');
       else body.classList.remove('paused');
     }
@@ -255,7 +252,6 @@
       const isActive = index === currentTrackIndex;
       const trackEl = document.createElement('div');
       trackEl.className = `track ${isActive ? 'active' : ''}`;
-      
       trackEl.innerHTML = `
         <span>${track.title}</span>
         <span class="track-duration" id="dur-${index}">${track.duration || '--:--'}</span>
@@ -277,7 +273,6 @@
   function masterPlay() {
     if (currentTrackIndex === -1) playTrack(0);
     else audio.paused ? audio.play() : audio.pause();
-    updateDisplayBox();
   }
 
   function playTrack(index) {
@@ -302,7 +297,6 @@
   audio.onended = () => isLooping ? (audio.currentTime = 0, audio.play()) : nextTrack();
 
   buildPlaylist();
-  displayTitle.innerText = "STANDBY: CHOOSE TRACK";
 </script>
 </body>
 </html>

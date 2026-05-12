@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>SAHIR QAWI - BALALAIKA TRACKS</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
@@ -11,6 +11,7 @@
       --neon-cyan: #00FFFF;
       --neon-pink: #DE70A1;
       --bg-black: #080808;
+      --safe-bottom: env(safe-area-inset-bottom);
     }
 
     html, body {
@@ -20,39 +21,41 @@
       color: var(--neon-cyan);
       font-family: 'Russo One', sans-serif;
       height: 100%;
+      width: 100vw;
       overflow: hidden; 
+      overscroll-behavior: none; /* Prevents "pull to refresh" bounce */
     }
 
     body {
       display: flex;
       flex-direction: column;
-      width: 100%;
     }
 
+    /* --- PORTRAIT STICKY TOP --- */
     .sticky-top {
       flex-shrink: 0;
-      padding: 10px 15px;
+      padding: 15px 15px 10px;
       background: var(--bg-black);
       z-index: 10;
       border-bottom: 1px solid #1a1a1a;
       text-align: center;
     }
 
-    .player-header { margin-bottom: 5px; }
-    .line-1 { font-size: 22px; letter-spacing: 3px; display: block; }
-    .line-2 { font-size: 10px; letter-spacing: 1.5px; color: var(--neon-pink); display: block; margin-top: 2px; }
+    .player-header { margin-bottom: 8px; }
+    .line-1 { font-size: 20px; letter-spacing: 2px; display: block; }
+    .line-2 { font-size: 9px; letter-spacing: 1.2px; color: var(--neon-pink); display: block; margin-top: 2px; }
 
-    /* --- IMAGE FIX: NO CROPPING --- */
+    /* Art scales relative to screen width to fit portrait perfectly */
     .art-container {
-      width: 200px;
-      height: 200px;
-      max-width: 50vw;
-      max-height: 50vw;
-      margin: 10px auto;
+      width: 160px;
+      height: 160px;
+      max-width: 45vw;
+      max-height: 45vw;
+      margin: 5px auto 12px;
       border: 2px solid var(--neon-pink);
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 0 15px rgba(222, 112, 161, 0.3);
+      box-shadow: 0 0 15px rgba(222, 112, 161, 0.2);
       background-color: #000;
       display: flex;
       align-items: center;
@@ -62,40 +65,36 @@
     .album-art {
       width: 100%;
       height: 100%;
-      object-fit: contain; /* Ensures the whole image fits inside the box */
-      display: block;
+      object-fit: contain;
     }
 
     .now-playing-display {
-      margin: 8px 0;
-      padding: 6px 12px;
+      margin-bottom: 10px;
+      padding: 8px 12px;
       background: rgba(222, 112, 161, 0.05);
-      border: 1px solid rgba(222, 112, 161, 0.3);
-      border-radius: 4px;
+      border: 1px solid rgba(222, 112, 161, 0.2);
+      border-radius: 6px;
       display: flex;
       align-items: center;
       gap: 10px; 
-      min-height: 25px;
+      min-height: 28px;
       overflow: hidden;
-      position: relative;
     }
 
     .now-playing-badge {
-      font-size: 8px;
+      font-size: 7px;
       color: var(--neon-pink);
-      letter-spacing: 1px;
       white-space: nowrap;
       display: none; 
       z-index: 2;
       background: var(--bg-black);
-      padding-right: 8px;
+      padding-right: 5px;
     }
 
     .scroll-container {
       flex-grow: 1;
       overflow: hidden;
       white-space: nowrap;
-      position: relative;
     }
 
     .current-track-title {
@@ -112,51 +111,18 @@
       100% { transform: translate(-100%, 0); }
     }
 
-    .main-visualizer {
-      display: none; 
-      align-items: flex-end;
-      gap: 2px;
-      height: 10px;
-      z-index: 2;
-      background: var(--bg-black);
-      padding-right: 5px;
-    }
-
-    .main-bar {
-      width: 2px;
-      background: var(--neon-pink);
-      animation: bounce-small 0.6s infinite ease-in-out;
-    }
-
-    @keyframes bounce-small {
-      0%, 100% { height: 2px; }
-      50% { height: 10px; }
-    }
-
-    .main-bar:nth-child(2) { animation-delay: 0.1s; }
-    .main-bar:nth-child(3) { animation-delay: 0.2s; }
-
-    .paused .main-bar { animation-play-state: paused !important; }
-    .paused .current-track-title { animation-play-state: paused !important; }
-
-    /* --- NATIVE BAR FIX: ABSOLUTE SUPPRESSION --- */
+    /* Aggressive native bar suppression */
     audio {
       display: none !important;
       visibility: hidden !important;
-      opacity: 0 !important;
-      position: fixed !important;
-      top: -9999px !important;
-      left: -9999px !important;
-      height: 0 !important;
-      width: 0 !important;
-      pointer-events: none !important;
+      position: absolute;
+      pointer-events: none;
     }
 
     .controls-grid {
       display: flex;
-      gap: 5px;
+      gap: 6px;
       justify-content: space-between;
-      margin-top: 5px;
     }
 
     .nav-btn {
@@ -164,10 +130,10 @@
       background: transparent;
       border: 1px solid var(--neon-cyan);
       color: var(--neon-cyan);
-      padding: 14px 0; /* Taller for mobile thumbs */
+      padding: 15px 0; /* Optimized for thumb size */
       font-family: 'Russo One', sans-serif;
       font-size: 9px;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
       text-transform: uppercase;
       white-space: nowrap;
@@ -177,15 +143,17 @@
     .play-btn { background: rgba(0, 255, 255, 0.1); }
     .loop-active { border-color: var(--neon-pink); color: var(--neon-pink); background: rgba(222, 112, 161, 0.1); }
 
+    /* --- SCROLLABLE PLAYLIST --- */
     .playlist-area {
       flex-grow: 1;
       overflow-y: auto;
       background: #0c0c0c;
       -webkit-overflow-scrolling: touch;
+      padding-bottom: var(--safe-bottom); /* iOS Home Bar protection */
     }
 
     .track {
-      padding: 15px;
+      padding: 16px 15px; /* Larger hit areas for portrait mode */
       border-bottom: 1px solid #1a1a1a;
       cursor: pointer;
       display: flex;
@@ -203,10 +171,31 @@
     .track-duration { 
       font-size: 10px; 
       color: var(--neon-cyan); 
-      opacity: 0.7;
+      opacity: 0.6;
     }
-    
-    ::-webkit-scrollbar { width: 4px; }
+
+    .main-visualizer {
+      display: none; 
+      align-items: flex-end;
+      gap: 2px;
+      height: 10px;
+    }
+
+    .main-bar {
+      width: 2px;
+      background: var(--neon-pink);
+      animation: bounce-small 0.6s infinite ease-in-out;
+    }
+
+    @keyframes bounce-small {
+      0%, 100% { height: 2px; }
+      50% { height: 10px; }
+    }
+
+    .paused .main-bar { animation-play-state: paused !important; }
+    .paused .current-track-title { animation-play-state: paused !important; }
+
+    ::-webkit-scrollbar { width: 3px; }
     ::-webkit-scrollbar-thumb { background: var(--neon-pink); }
   </style>
 </head>
@@ -218,22 +207,19 @@
       <span class="line-2">BALALAIKA TRACKS</span>
     </div>
 
-    <!-- Container ensures image doesn't stretch or crop -->
     <div class="art-container">
       <img src="https://i.postimg.cc/qBhBz9sG/Balalaika-image.jpg" alt="Balalaika Art" class="album-art">
     </div>
 
     <div class="now-playing-display" id="display-box">
       <span class="now-playing-badge" id="now-playing-badge">NOW PLAYING</span>
-      
       <div class="main-visualizer" id="main-viz">
         <div class="main-bar"></div>
         <div class="main-bar"></div>
         <div class="main-bar"></div>
       </div>
-      
       <div class="scroll-container">
-        <span class="current-track-title" id="current-title">PLEASE SELECT A TRACK TO START SYSTEM</span>
+        <span class="current-track-title" id="current-title">SELECT A TRACK TO START</span>
       </div>
     </div>
 
@@ -285,11 +271,9 @@
       displayTitle.innerText = tracks[currentTrackIndex].title;
       displayBadge.style.display = 'inline-block';
       mainViz.style.display = 'flex';
-      
       displayTitle.style.animation = 'none';
       displayTitle.offsetHeight; 
       displayTitle.style.animation = null;
-
       if (audio.paused) body.classList.add('paused');
       else body.classList.remove('paused');
     }
@@ -301,13 +285,8 @@
       const isActive = index === currentTrackIndex;
       const trackEl = document.createElement('div');
       trackEl.className = `track ${isActive ? 'active' : ''}`;
-      
       const durationText = track.duration || '--:--';
-      
-      trackEl.innerHTML = `
-        <span>${track.title}</span>
-        <span class="track-duration" id="dur-${index}">${durationText}</span>
-      `;
+      trackEl.innerHTML = `<span>${track.title}</span><span class="track-duration" id="dur-${index}">${durationText}</span>`;
       trackEl.onclick = () => playTrack(index);
       playlistDiv.appendChild(trackEl);
 
@@ -315,8 +294,8 @@
         const tempAudio = new Audio(track.url);
         tempAudio.addEventListener('loadedmetadata', () => {
           track.duration = formatTime(tempAudio.duration);
-          const durDisplay = document.getElementById(`dur-${index}`);
-          if (durDisplay) durDisplay.innerText = track.duration;
+          const d = document.getElementById(`dur-${index}`);
+          if (d) d.innerText = track.duration;
         });
       }
     });
@@ -330,13 +309,10 @@
 
   function playTrack(index) {
     if (index < 0 || index >= tracks.length) return;
-    if (currentTrackIndex === index) {
-      masterPlay();
-      return;
-    }
+    if (currentTrackIndex === index) { masterPlay(); return; }
     currentTrackIndex = index;
     audio.src = tracks[currentTrackIndex].url;
-    audio.play();
+    audio.play().catch(() => { /* handle mobile autoplay block */ });
     updateDisplayBox();
     buildPlaylist();
   }

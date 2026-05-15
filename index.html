@@ -23,177 +23,178 @@
       height: 100%;
       width: 100vw;
       overflow: hidden; 
-      overscroll-behavior: none; /* Prevents "pull to refresh" bounce */
+      overscroll-behavior: none;
     }
 
-    body {
-      display: flex;
-      flex-direction: column;
-    }
+    body { display: flex; flex-direction: column; }
 
-    /* --- PORTRAIT STICKY TOP --- */
     .sticky-top {
       flex-shrink: 0;
-      padding: 15px 15px 10px;
+      padding: 10px 10px 8px;
       background: var(--bg-black);
       z-index: 10;
       border-bottom: 1px solid #1a1a1a;
       text-align: center;
     }
 
-    .player-header { margin-bottom: 8px; }
-    .line-1 { font-size: 20px; letter-spacing: 2px; display: block; }
-    .line-2 { font-size: 9px; letter-spacing: 1.2px; color: var(--neon-pink); display: block; margin-top: 2px; }
+    .player-header { margin-bottom: 5px; }
+    .line-1 { font-size: 18px; letter-spacing: 2px; text-transform: uppercase; display: block; }
+    .line-2 { font-size: 8px; letter-spacing: 1.2px; color: var(--neon-pink); display: block; margin-top: 2px; }
 
-    /* Art scales relative to screen width to fit portrait perfectly */
-    .art-container {
-      width: 160px;
-      height: 160px;
-      max-width: 45vw;
-      max-height: 45vw;
-      margin: 5px auto 12px;
-      border: 2px solid var(--neon-pink);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 0 15px rgba(222, 112, 161, 0.2);
-      background-color: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .cta-container { margin: 8px 0; }
+    .expand-btn {
+      display: inline-flex;
+      padding: 10px 18px;
+      border: 1px solid var(--neon-pink);
+      color: var(--neon-pink);
+      text-decoration: none;
+      font-size: 9px;
+      text-transform: uppercase;
+      border-radius: 4px;
+      background: rgba(222, 112, 161, 0.1);
+      box-shadow: 0 0 10px rgba(222, 112, 161, 0.2);
     }
 
     .album-art {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
+      width: 110px; 
+      height: 110px; 
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid var(--neon-pink);
+      margin: 5px auto 10px; 
+      display: block;
     }
 
+    /* --- PROPORTIONAL HUB TEMPLATE --- */
     .now-playing-display {
-      margin-bottom: 10px;
-      padding: 8px 12px;
+      margin-bottom: 5px;
+      padding: 8px;
       background: rgba(222, 112, 161, 0.05);
-      border: 1px solid rgba(222, 112, 161, 0.2);
-      border-radius: 6px;
+      border: 1px solid rgba(222, 112, 161, 0.3);
+      border-radius: 8px;
       display: flex;
       align-items: center;
-      gap: 10px; 
-      min-height: 28px;
-      overflow: hidden;
+      min-height: 65px;
     }
 
-    .now-playing-badge {
-      font-size: 7px;
-      color: var(--neon-pink);
-      white-space: nowrap;
-      display: none; 
-      z-index: 2;
-      background: var(--bg-black);
-      padding-right: 5px;
-    }
-
-    .scroll-container {
-      flex-grow: 1;
-      overflow: hidden;
-      white-space: nowrap;
-    }
-
-    .current-track-title {
-      display: inline-block;
-      font-size: 10px;
-      color: var(--neon-cyan);
-      text-transform: uppercase;
-      padding-left: 100%;
-      animation: marquee 10s linear infinite;
-    }
-
-    @keyframes marquee {
-      0% { transform: translate(0, 0); }
-      100% { transform: translate(-100%, 0); }
-    }
-
-    /* Aggressive native bar suppression */
-    audio {
-      display: none !important;
-      visibility: hidden !important;
-      position: absolute;
-      pointer-events: none;
-    }
-
-    .controls-grid {
+    /* 60% Control Area */
+    .btn-group {
       display: flex;
-      gap: 6px;
-      justify-content: space-between;
+      gap: 5px;
+      width: 60%;
+      justify-content: center;
+      flex-shrink: 0;
     }
 
-    .nav-btn {
-      flex: 1;
-      background: transparent;
+    .inline-nav {
+      background: rgba(0, 255, 255, 0.1);
       border: 1px solid var(--neon-cyan);
       color: var(--neon-cyan);
-      padding: 15px 0; /* Optimized for thumb size */
       font-family: 'Russo One', sans-serif;
-      font-size: 9px;
+      font-size: 14px;
+      width: 34px;
+      height: 34px;
       border-radius: 6px;
       cursor: pointer;
-      text-transform: uppercase;
-      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       -webkit-tap-highlight-color: transparent;
     }
 
-    .play-btn { background: rgba(0, 255, 255, 0.1); }
-    .loop-active { border-color: var(--neon-pink); color: var(--neon-pink); background: rgba(222, 112, 161, 0.1); }
-
-    /* --- SCROLLABLE PLAYLIST --- */
-    .playlist-area {
-      flex-grow: 1;
-      overflow-y: auto;
-      background: #0c0c0c;
-      -webkit-overflow-scrolling: touch;
-      padding-bottom: var(--safe-bottom); /* iOS Home Bar protection */
-    }
-
-    .track {
-      padding: 16px 15px; /* Larger hit areas for portrait mode */
-      border-bottom: 1px solid #1a1a1a;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 11px;
-    }
-
-    .track.active { 
-      background: rgba(222, 112, 161, 0.1); 
-      border-left: 4px solid var(--neon-pink);
+    .play-pause-inline {
+      border-color: var(--neon-pink);
       color: var(--neon-pink);
+      background: rgba(222, 112, 161, 0.1);
+      font-size: 16px;
+      width: 40px;
+      height: 40px;
     }
 
-    .track-duration { 
-      font-size: 10px; 
-      color: var(--neon-cyan); 
-      opacity: 0.6;
+    /* Info Area on Right */
+    .title-container {
+      flex-grow: 1;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+      border-left: 1px solid rgba(222, 112, 161, 0.2);
+      padding-left: 10px;
     }
 
-    .main-visualizer {
-      display: none; 
+    .meta-line {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      margin-bottom: 2px;
+    }
+
+    .time-left {
+      font-size: 8px;
+      color: var(--neon-pink);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 1px;
+    }
+
+    .mini-viz {
+      display: none;
       align-items: flex-end;
       gap: 2px;
       height: 10px;
     }
 
-    .main-bar {
+    .bar {
       width: 2px;
       background: var(--neon-pink);
-      animation: bounce-small 0.6s infinite ease-in-out;
+      animation: bounce 0.6s infinite ease-in-out;
     }
 
-    @keyframes bounce-small {
+    @keyframes bounce {
       0%, 100% { height: 2px; }
       50% { height: 10px; }
     }
+    .bar:nth-child(2) { animation-delay: 0.1s; }
+    .bar:nth-child(3) { animation-delay: 0.2s; }
 
-    .paused .main-bar { animation-play-state: paused !important; }
-    .paused .current-track-title { animation-play-state: paused !important; }
+    .paused .bar { animation-play-state: paused !important; }
+
+    #current-track-title {
+      font-size: 9px;
+      color: #fff;
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
+
+    audio { display: none !important; }
+
+    .playlist-area {
+      flex-grow: 1;
+      overflow-y: auto;
+      background: #0c0c0c;
+      padding-bottom: var(--safe-bottom);
+    }
+
+    .track {
+      padding: 14px 15px;
+      border-bottom: 1px solid #111;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .track.active { 
+      background: rgba(222, 112, 161, 0.1); 
+      border-left: 4px solid var(--neon-pink);
+    }
+
+    .track-meta { display: flex; justify-content: space-between; align-items: center; }
+    .track-name { font-size: 11px; color: var(--neon-cyan); }
+    .track.active .track-name { color: var(--neon-pink); }
+    .track-badge { font-size: 8px; color: var(--neon-pink); display: none; }
+    .track.active .track-badge { display: inline; }
+    .track-duration { font-size: 10px; opacity: 0.6; color: var(--neon-cyan); }
 
     ::-webkit-scrollbar { width: 3px; }
     ::-webkit-scrollbar-thumb { background: var(--neon-pink); }
@@ -207,27 +208,32 @@
       <span class="line-2">BALALAIKA TRACKS</span>
     </div>
 
-    <div class="art-container">
-      <img src="https://i.postimg.cc/qBhBz9sG/Balalaika-image.jpg" alt="Balalaika Art" class="album-art">
+    <div class="cta-container">
+      <a href="https://sahirqawi.github.io/Balalaika-Tracks/" target="_blank" class="expand-btn">
+        📱 Mobile Users: Tap to Expand for Best Experience 🖱️
+      </a>
     </div>
+
+    <img src="https://i.postimg.cc/qBhBz9sG/Balalaika-image.jpg" alt="Art" class="album-art">
 
     <div class="now-playing-display" id="display-box">
-      <span class="now-playing-badge" id="now-playing-badge">NOW PLAYING</span>
-      <div class="main-visualizer" id="main-viz">
-        <div class="main-bar"></div>
-        <div class="main-bar"></div>
-        <div class="main-bar"></div>
+      <div class="btn-group">
+        <button class="inline-nav" onclick="prevTrack()">«</button>
+        <button class="inline-nav play-pause-inline" id="main-play-btn" onclick="masterPlay()">▶</button>
+        <button class="inline-nav" onclick="nextTrack()">»</button>
       </div>
-      <div class="scroll-container">
-        <span class="current-track-title" id="current-title">SELECT A TRACK TO START</span>
+      
+      <div class="title-container">
+        <div class="meta-line">
+          <span class="time-left" id="time-remaining">0:00</span>
+          <div class="mini-viz" id="mini-viz">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+          </div>
+        </div>
+        <span id="current-track-title">CLICK PLAY TO START</span>
       </div>
-    </div>
-
-    <div class="controls-grid">
-      <button class="nav-btn" onclick="prevTrack()">« Prev</button>
-      <button class="nav-btn play-btn" onclick="masterPlay()">Play/Pause</button>
-      <button id="loop-btn" class="nav-btn" onclick="toggleLoop()">Loop</button>
-      <button class="nav-btn" onclick="nextTrack()">Next »</button>
     </div>
 
     <audio id="main-audio" playsinline></audio>
@@ -250,34 +256,41 @@
   ];
 
   let currentTrackIndex = -1;
-  let isLooping = false;
   const audio = document.getElementById('main-audio');
   const playlistDiv = document.getElementById('playlist-container');
-  const loopBtn = document.getElementById('loop-btn');
-  const displayTitle = document.getElementById('current-title');
-  const displayBadge = document.getElementById('now-playing-badge');
-  const mainViz = document.getElementById('main-viz');
+  const trackTitleDisplay = document.getElementById('current-track-title');
+  const timeRemainingDisplay = document.getElementById('time-remaining');
+  const playBtn = document.getElementById('main-play-btn');
+  const miniViz = document.getElementById('mini-viz');
   const body = document.getElementById('main-body');
 
   function formatTime(seconds) {
-    if (isNaN(seconds) || seconds === Infinity) return '0:00';
+    if (isNaN(seconds) || seconds === Infinity || seconds < 0) return '0:00';
     const min = Math.floor(seconds / 60);
     const sec = Math.floor(seconds % 60);
     return min + ":" + (sec < 10 ? "0" : "") + sec;
   }
 
-  function updateDisplayBox() {
+  function updateStatus() {
     if (currentTrackIndex !== -1) {
-      displayTitle.innerText = tracks[currentTrackIndex].title;
-      displayBadge.style.display = 'inline-block';
-      mainViz.style.display = 'flex';
-      displayTitle.style.animation = 'none';
-      displayTitle.offsetHeight; 
-      displayTitle.style.animation = null;
-      if (audio.paused) body.classList.add('paused');
-      else body.classList.remove('paused');
+      trackTitleDisplay.innerText = tracks[currentTrackIndex].title;
+      miniViz.style.display = 'flex';
+      if (audio.paused) {
+        body.classList.add('paused');
+        playBtn.innerText = '▶';
+      } else {
+        body.classList.remove('paused');
+        playBtn.innerText = 'II';
+      }
     }
   }
+
+  audio.ontimeupdate = () => {
+    if (audio.duration) {
+      const remaining = Math.max(0, audio.duration - audio.currentTime);
+      timeRemainingDisplay.innerText = formatTime(remaining);
+    }
+  };
 
   function buildPlaylist() {
     playlistDiv.innerHTML = '';
@@ -285,18 +298,23 @@
       const isActive = index === currentTrackIndex;
       const trackEl = document.createElement('div');
       trackEl.className = `track ${isActive ? 'active' : ''}`;
-      const durationText = track.duration || '--:--';
-      trackEl.innerHTML = `<span>${track.title}</span><span class="track-duration" id="dur-${index}">${durationText}</span>`;
+      trackEl.innerHTML = `
+        <div class="track-meta">
+          <span class="track-name">${track.title}</span>
+          <span class="track-duration" id="dur-${index}">${track.duration || '--:--'}</span>
+        </div>
+        <span class="track-badge">[ NOW PLAYING ]</span>
+      `;
       trackEl.onclick = () => playTrack(index);
       playlistDiv.appendChild(trackEl);
 
       if (!track.duration) {
         const tempAudio = new Audio(track.url);
-        tempAudio.addEventListener('loadedmetadata', () => {
+        tempAudio.onloadedmetadata = () => {
           track.duration = formatTime(tempAudio.duration);
-          const d = document.getElementById(`dur-${index}`);
-          if (d) d.innerText = track.duration;
-        });
+          const dEl = document.getElementById(`dur-${index}`);
+          if (dEl) dEl.innerText = track.duration;
+        };
       }
     });
   }
@@ -304,7 +322,6 @@
   function masterPlay() {
     if (currentTrackIndex === -1) playTrack(0);
     else audio.paused ? audio.play() : audio.pause();
-    updateDisplayBox();
   }
 
   function playTrack(index) {
@@ -312,18 +329,17 @@
     if (currentTrackIndex === index) { masterPlay(); return; }
     currentTrackIndex = index;
     audio.src = tracks[currentTrackIndex].url;
-    audio.play().catch(() => { /* handle mobile autoplay block */ });
-    updateDisplayBox();
+    audio.play();
+    updateStatus();
     buildPlaylist();
   }
 
   function nextTrack() { playTrack((currentTrackIndex + 1) % tracks.length); }
   function prevTrack() { playTrack((currentTrackIndex - 1 + tracks.length) % tracks.length); }
-  function toggleLoop() { isLooping = !isLooping; loopBtn.classList.toggle('loop-active', isLooping); }
 
-  audio.onplay = () => updateDisplayBox();
-  audio.onpause = () => updateDisplayBox();
-  audio.onended = () => isLooping ? (audio.currentTime = 0, audio.play()) : nextTrack();
+  audio.onplay = updateStatus;
+  audio.onpause = updateStatus;
+  audio.onended = nextTrack;
 
   buildPlaylist();
 </script>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>SAHIR QAWI - AGI ORIGINALS VOL 1</title>
+  <title>SAHIR QAWI - BALALAIKA TRACKS</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
 
@@ -55,7 +55,17 @@
       box-shadow: 0 0 10px rgba(222, 112, 161, 0.2);
     }
 
-    /* --- INTEGRATED CONTROL HUB --- */
+    .album-art {
+      width: 110px; 
+      height: 110px; 
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid var(--neon-pink);
+      margin: 5px auto 10px; 
+      display: block;
+    }
+
+    /* --- PROPORTIONAL HUB --- */
     .now-playing-display {
       margin-bottom: 5px;
       padding: 8px;
@@ -101,7 +111,7 @@
       height: 40px;
     }
 
-    /* Title Area on Right */
+    /* Track Info on Right */
     .title-container {
       flex-grow: 1;
       text-align: left;
@@ -128,7 +138,7 @@
     }
 
     .mini-viz {
-      display: none; /* Shown via JS when playing */
+      display: none;
       align-items: flex-end;
       gap: 2px;
       height: 10px;
@@ -195,14 +205,16 @@
   <div class="sticky-top">
     <div class="player-header">
       <span class="line-1">SAHIR QAWI</span>
-      <span class="line-2">AGI ORIGINALS VOLUME 1</span>
+      <span class="line-2">BALALAIKA TRACKS</span>
     </div>
 
     <div class="cta-container">
-      <a href="https://sahirqawi.github.io/Sahir-Qawi-Music/" target="_blank" class="expand-btn">
+      <a href="https://sahirqawi.github.io/Balalaika-Tracks/" target="_blank" class="expand-btn">
         📱 Mobile Users: Tap to Expand for Best Experience 🖱️
       </a>
     </div>
+
+    <img src="https://i.postimg.cc/qBhBz9sG/Balalaika-image.jpg" alt="Art" class="album-art">
 
     <div class="now-playing-display" id="display-box">
       <div class="btn-group">
@@ -231,16 +243,16 @@
 
 <script>
   const tracks = [
-    { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/01_Sahir%20Qawi%20Intro%20theme.mp3', title: '01. SAHIR QAWI INTRO' },
-    { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/02_Altered%20states%20of%20Consiousness%20.mp3', title: '02. ALTERED STATES' },
-    { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/03_Instruemtnal.mp3', title: '03. INSTRUMENTAL' },
-    { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/04_Extra%20Sensory%20Perceptions.mp3', title: '04. ESP' },
-    { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/05_Spectral%20frequencies%20.mp3', title: '05. SPECTRAL FREQUENCIES' },
-    { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/06_Subtle%20energies%20.mp3', title: '06. SUBTLE ENERGIES' },
-    { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/07_Samurai%20Percussion.mp3', title: '07. SAMURAI PERCUSSION' },
-    { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/08_Shamanic%20trance.mp3', title: '08. SHAMANIC TRANCE' },
-    { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/09_Esoteric%20song.mp3', title: '09. ESOTERIC SONG' },
-    { url: 'https://raw.githubusercontent.com/WaseemShaik26/Sahir-Qawi-Music/main/10_Ethereal%20Beings.mp3', title: '10. ETHEREAL BEINGS' }
+    { url: 'https://raw.githubusercontent.com/SahirQawi/Balalaika-Tracks/5716a5d1471e2bc4a8d3e801329661f17a063f1a/01_Strings%20of%20the%20Rus.mp3', title: '01. STRINGS OF THE RUS' },
+    { url: 'https://raw.githubusercontent.com/SahirQawi/Balalaika-Tracks/5716a5d1471e2bc4a8d3e801329661f17a063f1a/02_Whispers%20of%20Divination.mp3', title: '02. WHISPERS OF DIVINATION' },
+    { url: 'https://raw.githubusercontent.com/SahirQawi/Balalaika-Tracks/5716a5d1471e2bc4a8d3e801329661f17a063f1a/03_Tarot%20reading.mp3', title: '03. TAROT READING' },
+    { url: 'https://raw.githubusercontent.com/SahirQawi/Balalaika-Tracks/5716a5d1471e2bc4a8d3e801329661f17a063f1a/04_Hut%20with%20chicken%20legs.mp3', title: '04. HUT WITH CHICKEN LEGS' },
+    { url: 'https://raw.githubusercontent.com/SahirQawi/Balalaika-Tracks/5716a5d1471e2bc4a8d3e801329661f17a063f1a/05_Lingering%20Spectral.mp3', title: '05. LINGERING SPECTRAL' },
+    { url: 'https://raw.githubusercontent.com/SahirQawi/Balalaika-Tracks/5716a5d1471e2bc4a8d3e801329661f17a063f1a/06_%20The%20Wandering%20String.mp3', title: '06. THE WANDERING STRING' },
+    { url: 'https://raw.githubusercontent.com/SahirQawi/Balalaika-Tracks/5716a5d1471e2bc4a8d3e801329661f17a063f1a/07_Forest%20watchers.mp3', title: '07. FOREST WATCHERS' },
+    { url: 'https://raw.githubusercontent.com/SahirQawi/Balalaika-Tracks/5716a5d1471e2bc4a8d3e801329661f17a063f1a/08_Balalaika%20Instrumental%20.mp3', title: '08. BALALAIKA INSTRUMENTAL' },
+    { url: 'https://raw.githubusercontent.com/SahirQawi/Balalaika-Tracks/5716a5d1471e2bc4a8d3e801329661f17a063f1a/09_Three%20Strings%20Beneath%20the%20Birches.mp3', title: '09. THREE STRINGS BENEATH BIRCHES' },
+    { url: 'https://raw.githubusercontent.com/SahirQawi/Balalaika-Tracks/5716a5d1471e2bc4a8d3e801329661f17a063f1a/10_%20Sahir%20Qawi%20unfolds.mp3', title: '10. SAHIR QAWI UNFOLDS' }
   ];
 
   let currentTrackIndex = -1;

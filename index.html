@@ -30,29 +30,29 @@
 
     .sticky-top {
       flex-shrink: 0;
-      padding: 15px 10px 10px;
+      padding: 20px 10px 10px;
       background: var(--bg-black);
       z-index: 10;
       border-bottom: 1px solid #1a1a1a;
       text-align: center;
     }
 
-    .player-header { margin-bottom: 12px; }
-    .line-1 { font-size: 18px; letter-spacing: 2px; text-transform: uppercase; display: block; }
-    .line-2 { font-size: 8px; letter-spacing: 1.2px; color: var(--neon-pink); display: block; margin-top: 2px; }
+    .player-header { margin-bottom: 15px; }
+    .line-1 { font-size: 20px; letter-spacing: 2px; text-transform: uppercase; display: block; }
+    .line-2 { font-size: 9px; letter-spacing: 1.2px; color: var(--neon-pink); display: block; margin-top: 2px; }
 
     .album-art {
-      width: 130px; 
-      height: 130px; 
+      width: 140px; 
+      height: 140px; 
       object-fit: cover;
-      border-radius: 8px;
+      border-radius: 10px;
       border: 2px solid var(--neon-pink);
-      margin: 5px auto 15px; 
+      margin: 0 auto 20px; 
       display: block;
-      box-shadow: 0 0 10px rgba(222, 112, 161, 0.2);
+      box-shadow: 0 0 15px rgba(222, 112, 161, 0.2);
     }
 
-    /* --- PROPORTIONAL HUB --- */
+    /* --- THE HUB: 60% CONTROLS | 40% INFO --- */
     .now-playing-display {
       margin-bottom: 5px;
       padding: 8px;
@@ -64,9 +64,10 @@
       min-height: 65px;
     }
 
+    /* 60% Width Group */
     .btn-group {
       display: flex;
-      gap: 5px;
+      gap: 6px;
       width: 60%;
       justify-content: center;
       flex-shrink: 0;
@@ -77,9 +78,9 @@
       border: 1px solid var(--neon-cyan);
       color: var(--neon-cyan);
       font-family: 'Russo One', sans-serif;
-      font-size: 14px;
-      width: 36px;
-      height: 36px;
+      font-size: 15px;
+      width: 38px;
+      height: 38px;
       border-radius: 6px;
       cursor: pointer;
       display: flex;
@@ -92,11 +93,12 @@
       border-color: var(--neon-pink);
       color: var(--neon-pink);
       background: rgba(222, 112, 161, 0.1);
-      font-size: 16px;
-      width: 42px;
-      height: 42px;
+      font-size: 18px;
+      width: 44px;
+      height: 44px;
     }
 
+    /* 40% Width Group (Info) */
     .title-container {
       flex-grow: 1;
       text-align: left;
@@ -105,18 +107,18 @@
       justify-content: center;
       overflow: hidden;
       border-left: 1px solid rgba(222, 112, 161, 0.2);
-      padding-left: 10px;
+      padding-left: 12px;
     }
 
     .meta-line {
       display: flex;
       align-items: flex-end;
       gap: 8px;
-      margin-bottom: 2px;
+      margin-bottom: 3px;
     }
 
     .time-left {
-      font-size: 8px;
+      font-size: 9px;
       color: var(--neon-pink);
       font-variant-numeric: tabular-nums;
       letter-spacing: 1px;

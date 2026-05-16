@@ -71,6 +71,7 @@
       width: 60%;
       justify-content: center;
       flex-shrink: 0;
+      align-items: center;
     }
 
     .inline-nav {
@@ -87,6 +88,7 @@
       align-items: center;
       justify-content: center;
       -webkit-tap-highlight-color: transparent;
+      transition: all 0.2s ease;
     }
 
     .play-pause-inline {
@@ -96,6 +98,24 @@
       font-size: 18px;
       width: 44px;
       height: 44px;
+    }
+
+    /* Fancy Loop Button Styling */
+    .loop-btn {
+      font-size: 16px;
+    }
+
+    .loop-btn.loop-active {
+      border-color: var(--neon-pink);
+      color: var(--neon-pink);
+      background: rgba(222, 112, 161, 0.2);
+      box-shadow: 0 0 8px rgba(222, 112, 161, 0.6);
+      animation: pulse-glow 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 4px rgba(222, 112, 161, 0.4); }
+      50% { box-shadow: 0 0 12px rgba(222, 112, 161, 0.8); }
     }
 
     /* 40% Width Group (Info) */
@@ -201,6 +221,7 @@
       <div class="btn-group">
         <button class="inline-nav" onclick="prevTrack()">«</button>
         <button class="inline-nav play-pause-inline" id="main-play-btn" onclick="masterPlay()">▶</button>
+        <button class="inline-nav loop-btn" id="loop-btn" onclick="toggleLoop()">↻</button>
         <button class="inline-nav" onclick="nextTrack()">»</button>
       </div>
       
@@ -242,6 +263,7 @@
   const trackTitleDisplay = document.getElementById('current-track-title');
   const timeRemainingDisplay = document.getElementById('time-remaining');
   const playBtn = document.getElementById('main-play-btn');
+  const loopBtn = document.getElementById('loop-btn');
   const miniViz = document.getElementById('mini-viz');
   const body = document.getElementById('main-body');
 
@@ -305,6 +327,15 @@
     else audio.paused ? audio.play() : audio.pause();
   }
 
+  function toggleLoop() {
+    audio.loop = !audio.loop;
+    if (audio.loop) {
+      loopBtn.classList.add('loop-active');
+    } else {
+      loopBtn.classList.remove('loop-active');
+    }
+  }
+
   function playTrack(index) {
     if (index < 0 || index >= tracks.length) return;
     if (currentTrackIndex === index) { masterPlay(); return; }
@@ -320,7 +351,11 @@
 
   audio.onplay = updateStatus;
   audio.onpause = updateStatus;
-  audio.onended = nextTrack;
+  audio.onended = () => {
+    if (!audio.loop) {
+      nextTrack();
+    }
+  };
 
   buildPlaylist();
 </script>
